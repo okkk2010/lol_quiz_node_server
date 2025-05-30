@@ -5,13 +5,12 @@ const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
 
 const app = express();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 // app.set('view engine', 'ejs');
 // app.use(express.static('public'));
-// app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 // app.use(methodOverride('_method'));
-
-// ✅ 1. ToDo 목록 보기
 app.get('/', async (req, res) => {
     try {
         const [todos] = await db.query("SELECT * FROM user");
@@ -27,6 +26,15 @@ app.get('/id', async (req, res) => {
         const [todos] = await db.query(`SELECT id FROM user`);
         res.send(todos);
         //res.render('index', { todos });
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+});
+
+app.put('/signUpUser', async (req, res) => {
+    try {
+        const [ id, nickname, password ] = req. body();
+        await db.query(`INSERT INTO user(id, nickname, password) VALUES (?,?,?)`, [id, nickname, password]);
     } catch (err) {
         res.status(500).send(err.message);
     }
