@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
-const db = require('./server/DBServer');
 const bodyParser = require('body-parser');
+const userRoutes = require("./routers/userRouter");
 const methodOverride = require('method-override');
 
 const app = express();
@@ -11,36 +11,46 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 // app.use(methodOverride('_method'));
-app.get('/', async (req, res) => {
-    try {
-        const [todos] = await db.query("SELECT * FROM user");
-        res.send(todos);
-        //res.render('index', { todos });
-    } catch (err) {
-        res.status(500).send(err.message);
-    }
-});
 
-app.get('/id', async (req, res) => {
-    try {
-        const [todos] = await db.query(`SELECT id FROM user`);
-        res.send(todos);
-        //res.render('index', { todos });
-    } catch (err) {
-        res.status(500).send(err.message);
-    }
+//#region 미들웨이
+app.use((req, res, next) => {
+    console.log("요청 : ", req.method, req.url);
+    next();
 });
+//#endregion
 
-app.put('/signUpUser', async (req, res) => {
-    try {
-        const { id, nickname, password } = req.body;
-        await db.query(`INSERT INTO user(id, nickname, password) VALUES (?,?,?)`, [id, nickname, password]);
+app.use("/user", userRoutes);
 
-        res.status(200).send({ message : "회원가입 완료!"});
-    } catch (err) {
-        res.status(500).send(err.message);
-    }
-});
+// app.get('/', async (req, res) => {
+//     try {
+//         const [todos] = await db.query("SELECT * FROM user");
+//         res.send(todos);
+//         //res.render('index', { todos });
+//     } catch (err) {
+//         res.status(500).send(err.message);
+//     }
+// });
+
+// app.get('/id', async (req, res) => {
+//     try {
+//         const [todos] = await db.query(`SELECT id FROM user`);
+//         res.send(todos);
+//         //res.render('index', { todos });
+//     } catch (err) {
+//         res.status(500).send(err.message);
+//     }
+// });
+
+// app.put('/signUpUser', async (req, res) => {
+//     try {
+//         const { id, nickname, password } = req.body;
+//         await db.query(`INSERT INTO user(id, nickname, password) VALUES (?,?,?)`, [id, nickname, password]);
+
+//         res.status(200).send({ message : "회원가입 완료!"});
+//     } catch (err) {
+//         res.status(500).send(err.message);
+//     }
+// });
 
 // // ✅ 2. ToDo 추가
 // app.post('/todos', async (req, res) => {
