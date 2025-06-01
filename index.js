@@ -1,8 +1,12 @@
 require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
-const userRoutes = require("./routers/userRouter");
 const methodOverride = require('method-override');
+
+//#region require router
+const userRoutes = require("./routers/userRouter");
+const quizRoutes = require("./routers/quizRouter");
+//#endregion
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -19,7 +23,11 @@ app.use((req, res, next) => {
 });
 //#endregion
 
+//user
 app.use("/user", userRoutes);
+
+//quiz
+//app.use("/quiz", quizRoutes);
 
 // app.get('/', async (req, res) => {
 //     try {

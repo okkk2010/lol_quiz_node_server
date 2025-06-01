@@ -7,3 +7,35 @@ exports.signUpUser = async (id, nickname, password) => {
         throw err;
     }
 };
+
+exports.checkPassword = async (id) => {
+    try {
+        return await db.query("SELECT password FROM user WHERE id = ?", [id]);
+    } catch(err) {
+        throw  err;
+    }
+}
+
+exports.userInfo = async (id) => {
+    try {
+        return await db.query("SELECT id, nickname, create_at, tier FROM user WHERE id = ?", [id]);
+    } catch(err) {
+        throw err;
+    }
+}
+
+exports.passwordChange = async (id, password) => {
+    try {
+        await db.query("UPDATE user SET password = ? WHERE id = ?", [password, id]);
+    } catch(err) {
+        throw err;
+    }
+}
+
+exports.nicknameChange = async (id, nickname) => {
+    try {
+        await db.query("UPDATE user SET nickname = ? WHERE id = ?", [nickname, id]);
+    } catch(err) {
+        throw err;
+    }
+}
