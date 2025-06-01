@@ -8,8 +8,7 @@ exports.signUpUser = async (req, res) => {
         await userService.signUpUser(id, nickname, hashPassword);
 
         res.status(200).json({
-            "success": true,
-            "content": `${id}로 회원가입에 성공했습니다!`
+            "success": true
         });
     } catch(err) {
         if(err.code === "ER_DUP_ENTRY") {
@@ -38,21 +37,41 @@ exports.signInUser = async (req, res) => {
         const [ rows ] = await userService.checkPassword(id);
 
         if(rows.length === 0) {
-            res.status(400).send("아이디 없음");
+            res.status(400).json({
+                "success": false,
+                "error": {
+                    "code": "NOT_FOUND_ID",
+                    "message": "해당 아이디는 없습니다."
+                }
+            });
             return;
         }
 
         const curPw = rows[0].password;
         const isMatch = await bcrypt.compare(password, curPw);
         if (!(isMatch)) {
-            res.status(400).send("비밀번호가 일치하지 않습니다.");
+            res.status(400).json({
+                "success": false,
+                "error": {
+                    "code": "NOT_MATCH_PASSWORD",
+                    "message": "비밀번호가 일치하지 않습니다."
+                }
+            });
             return;
         }
 
-        res.status(200).send("로그인 성공!");
+        res.status(200).json({
+            "success": true,
+        });
     } catch(err) {
         console.log(err.message);
-        res.status(500).send("서버 실행 오류 : " + err.code);
+        res.status(500).json({
+            "success": false,
+            "error": {
+                "code": "SERVER_ERROR",
+                "message": "서버 오류입니다."
+            }
+        });
     }
 };
 
@@ -62,13 +81,28 @@ exports.userInfo = async (req, res) => {
         const [ curUserInfo ] = await userService.userInfo(id);
 
         if(curUserInfo.length === 0) {
-            res.status(400).send(`해당 id: ${id}에 대한 정보가 없습니다.`);
+            res.status(400).json({
+                "success": false,
+                "error": {
+                    "code": "NOT_FOUND_ID",
+                    "message": `해당 id: ${id}에 대한 정보가 없습니다.`
+                }
+            });
             return;
         }
 
-        res.status(200).send(curUserInfo);
+        res.status(200).json({
+            "success": true,
+            "content": `${JSON.stringify(curUserInfo[0])}`
+        });
     } catch(err) {
-        res.status(500).send("서버 실행 오류 : " + err.code);
+        res.status(500).json({
+            "success": false,
+            "error": {
+                "code": "SERVER_ERROR",
+                "message": "서버 오류입니다."
+            }
+        });
     }
 };
 
@@ -78,9 +112,17 @@ exports.passwordChange = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
         await userService.passwordChange(id, hashedPassword);
 
-        res.status(200).send(`해당 id: ${id}의 비밀번호를 변경했습니다!`);
+        res.status(200).JSON({
+            "success": true,
+        });
     } catch(err) {
-        res.status(500).send("서버 실행 오류 : " + err.code);
+        res.status(500).json({
+            "success": false,
+            "error": {
+                "code": "SERVER_ERROR",
+                "message": "서버 오류입니다."
+            }
+        });        
     }
 };
 
@@ -91,16 +133,30 @@ exports.passwordReset = async (req, res) => {
         
         const isMatch = await bcrypt.compare(inputPw, beforPw[0].password);
         if(!isMatch) {
-            res.status(400).send("비밀번호가 일치하지 않습니다.");
+            res.status(400).json({
+                "success": false,
+                "error": {
+                    "code": "NOT_MATCH_PASSWORD",
+                    "message": "비밀번호 불일치"
+                }
+            });
             return;
         }
 
         const hashedPw = await bcrypt.hash(afterPw, 10);
         await userService.passwordChange(id, hashedPw);
 
-        res.status(200).send("비밀번호가 변경되었습니다!");
+        res.status(200).json({
+            "success": true
+        });
     } catch(err) {
-        res.status(500).send("서버 실행 오류 : " + err.code);
+        res.status(500).json({
+            "success": false,
+            "error": {
+                "code": "SERVER_ERROR",
+                "message": "서버 오류"
+            }
+        });
     }
 }
 
@@ -109,8 +165,16 @@ exports.nicknameChange = async (req, res) => {
         const { id, nickname } = req.body;
         await userService.nicknameChange(id, nickname);
 
-        res.status(200).send(`해당 id: ${id}의 닉네임을 ${nickname}으로 변경했습니다!`);
+        res.status(200).json({
+            "success": true
+        });
     } catch(err) {
-        res.status(500).send("서버 실행 오류 : " + err.code);
+        res.status(500).json({
+            "success": false,
+            "error": {
+                "code": "SERVER_ERROR",
+                "message": "서버 오류"
+            }
+        });
     }
 };

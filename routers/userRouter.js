@@ -5,9 +5,9 @@ const userController = require("../controllers/userController");
 //회원가입
 router.put('/sign-up-user', userController.signUpUser);
 //로그인
-router.get("/sign-in-user", userController.signInUser);
+router.post("/sign-in-user", userController.signInUser);
 //회원 조회
-router.get("/user-info", userController.userInfo);
+router.post("/user-info", userController.userInfo);
 //비밀번호 변경
 router.post("/user-password-change", userController.passwordChange);
 //비밀번호 리셋
