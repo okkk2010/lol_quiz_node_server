@@ -25,7 +25,7 @@ app.use((req, res, next) => {
 
 //user
 app.use("/user", userRoutes);
-
+app.use("/quiz", quizRoutes);
 //quiz
 //app.use("/quiz", quizRoutes);
 

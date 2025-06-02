@@ -178,3 +178,33 @@ exports.nicknameChange = async (req, res) => {
         });
     }
 };
+
+exports.userDelete = async (req, res) => {
+    try {
+        const { id } = req.body;
+        const result = await userService.userDelete(id);
+
+        if(result.affectedRows === 0) {
+            res.status(400).json({
+                "success": false,
+                "error": {
+                    "code": "NOT_FOUND_ID",
+                    "message": `해당 id: ${id}에 대한 정보가 없습니다.`
+                }
+            });
+            return;
+        }
+
+        res.status(200).json({
+            "success": true
+        });
+    } catch(err) {
+        res.status(500).json({
+            "success": false,
+            "error": {
+                "code": "SERVER_ERROR",
+                "message": "서버 오류"
+            }
+        });
+    }
+};

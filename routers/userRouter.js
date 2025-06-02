@@ -14,6 +14,9 @@ router.post("/user-password-change", userController.passwordChange);
 router.post("/user-password-reset", userController.passwordReset);
 //닉네임 변경
 router.post("/user-nickname-change", userController.nicknameChange);
+//회원 탈퇴
+router.post("/user-delete", userController.userDelete);
 
+//사용자 권한은 아직
 
 module.exports = router;

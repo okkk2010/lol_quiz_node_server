@@ -39,3 +39,11 @@ exports.nicknameChange = async (id, nickname) => {
         throw err;
     }
 }
+
+exports.userDelete = async (id) => {
+    try {
+        return await db.query("DELETE FROM user WHERE id = ?", [id]);
+    } catch(err) {
+        throw err;
+    }
+}
