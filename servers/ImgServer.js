@@ -25,7 +25,8 @@ const s3 = new AWS.S3();
 //     }
 // });
 
-exports.getRresignUrl = async (key, mimeType) => {
+// Return a pre-signed URL for uploading an image to S3
+exports.getPresignUrl = async (key, mimeType) => {
     try {
         const url = s3.getSignedUrl('putObject', {
             Bucket: process.env.AWS_S3_BUCKET_NAME,
@@ -63,6 +64,6 @@ exports.uploadImage = async (filePath, keyName) => {
 }
 
 
-//module.exports = { getRresignUrl };
+//module.exports = { getPresignUrl };
 //uploadImage("testImage.png", "test.jpg");
 

@@ -18,7 +18,7 @@ exports.createQuizBasic = async (req, res) => {
 
         const quiz_id = result[0].insertId.toString();
         // s3 pre-signed URL 생성
-        const s3_url = await imgDb.getRresignUrl(quiz_id, mime_type);
+        const s3_url = await imgDb.getPresignUrl(quiz_id, mime_type);
         res.status(201).json({
             "success": true,
             "content": JSON.stringify({
