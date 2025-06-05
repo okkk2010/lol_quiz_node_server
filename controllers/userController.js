@@ -208,3 +208,22 @@ exports.userDelete = async (req, res) => {
         });
     }
 };
+
+exports.userTierUpdate = async (req, res) => {
+    try {
+        const { id, answer_quiz } = req.body;
+        await userService.userTierUpdate(id, answer_quiz);
+
+        res.status(200).json({
+            "success": true
+        });
+    } catch(err) {
+        res.status(500).json({
+            "success": false,
+            "error": {
+                "code": "SERVER_ERROR",
+                "message": "서버 오류"
+            }
+        });
+    }
+};

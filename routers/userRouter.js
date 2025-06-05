@@ -17,6 +17,8 @@ router.post("/user-nickname-change", userController.nicknameChange);
 //회원 탈퇴
 router.post("/user-delete", userController.userDelete);
 
+//유저 티어 업데이트
+router.post("/user-tier-update", userController.userTierUpdate);
 //사용자 권한은 아직
 
 module.exports = router;
