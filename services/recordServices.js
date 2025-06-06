@@ -31,7 +31,7 @@ exports.getRanking = async () => {
 
         return await db.query("SELECT ROW_NUMBER() OVER (ORDER BY MAX(record.answer_quiz) DESC) AS rank_num," +
 	                            "user.id AS user_id, user.nickname AS nickname, MAX(record.answer_quiz) AS answer_quiz " +
-	                            "FROM user JOIN record ON user.id = record.user_id GROUP BY user.id ORDER BY 1 DESC LIMIT 30");
+	                            "FROM user JOIN record ON user.id = record.user_id GROUP BY user.id ORDER BY 1 ASC LIMIT 30");
     } catch (err) {
         throw err;
     }
