@@ -9,6 +9,7 @@ router.post("/record-game-history", recordController.recordGameHistory);
 router.post("/get-high-answer-quiz", recordController.getHighAnswerQuiz);
 // 랭킹
 router.post("/get-ranking", recordController.getRanking);
-
+// 전적 통계
+router.post("/get-record-stats", recordController.getRecordStats);
 
 module.exports = router;

@@ -36,3 +36,14 @@ exports.getRanking = async () => {
         throw err;
     }
 }
+
+exports.getRecordStats = async (id) => {
+    try {
+        const [result] = await db.query("SELECT user_id, COUNT(*) AS total_quiz, AVG(answer_quiz) AS avg_answer_quiz FROM record WHERE user_id = ?", [id]);
+        return result[0];
+    } catch (err) {
+        throw err;
+    }
+}
+
+//
