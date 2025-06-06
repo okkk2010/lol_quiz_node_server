@@ -19,7 +19,7 @@ exports.getTierByScore = async (req, res) => {
 
         res.status(200).json({
             "success": true,
-            "content": tier[0]
+            "content": JSON.stringify(tier[0])
         });
     } catch (err) {
         res.status(500).json({
