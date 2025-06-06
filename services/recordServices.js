@@ -2,7 +2,7 @@ const db = require('../servers/DBServer');
 
 exports.getUserRecords = async (id) => {
     try {
-        return await db.query("SELECT * FROM record WHERE user_id = ?", [id]);
+        return await db.query("SELECT id, title, user_id, answer_quiz, DATE_FORMAT(play_date, '%Y-%m-%d') AS play_date FROM record WHERE user_id = ?", [id]);
     } catch (err) {
         throw err;
     }
