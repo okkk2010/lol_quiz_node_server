@@ -1,4 +1,5 @@
 const db = require('../servers/DBServer');
+const recordService = require('./recordServices');
 
 exports.signUpUser = async (id, nickname, password) => {
     try {
@@ -48,18 +49,52 @@ exports.userDelete = async (id) => {
     }
 }
 
-exports.userTierUpdate = async (id, answer_quiz) => {
+exports.userTierUpdate = async (id) => {
     try {
-        //tier table에 tier 기준이 있고 이 내용을 answer_quiz와 비교해 tier를 결정하고
-        //user table에 해당 id의 tier를 업데이트
-        //tier table에 standard_score와 비교하고, answer_quiz가 해당 score 이상인 tier를 찾는다.
-        const tier = await db.query("SELECT tier FROM tier WHERE standard_score <= ? ORDER BY standard_score DESC LIMIT 1", [answer_quiz]);
+        const [recordRanking] = await recordService.getRanking();
+
+        const userRanking = recordRanking.find(r => r.id === id);
+        if (!userRanking) {
+            console.error(`User with id ${id} not found in ranking.`);
+            return;
+        }
+
+        let tier;
+        if( userRanking.rank_num <= 30) {
+            [tier] = await db.query("SELECT name FROM tier WHERE standard_ranking >= ? ORDER BY standard_ranking ASC LIMIT 1", [userRanking.rank_num]);
+        } else {
+            [tier] = await db.query("SELECT name FROM tier WHERE standard_score <= ? ORDER BY standard_score DESC LIMIT 1", [userRanking.answer_quiz]);
+        }
+
         if (tier.length === 0) {
             throw new Error("Invalid answer_quiz provided.");
         }
         // tier는 배열로 반환되므로 첫 번째 요소의 tier 값을 사용
         // user 테이블의 tier 업데이트
-        await db.query("UPDATE user SET tier = ? WHERE id = ?", [tier, id]);
+        await db.query("UPDATE user SET tier = ? WHERE id = ?", [tier[0].name, id]);
+    } catch(err) {
+        throw err;
+    }
+}
+
+exports.getUserRanking = async (id) => {
+    try {
+        const [ranking] = await recordService.getRanking();
+        const userRanking = ranking.find(r => r.id === id);
+
+        if (!userRanking) {
+            throw new Error("User not found in ranking.");
+        }
+
+        return userRanking.rank_num;
+    } catch(err) {
+        throw err;
+    }
+}
+
+exports.getAllUsers = async () => {
+    try {
+        return await db.query("SELECT id, nickname, create_at, tier FROM user");
     } catch(err) {
         throw err;
     }

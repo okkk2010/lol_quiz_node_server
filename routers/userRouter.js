@@ -16,9 +16,14 @@ router.post("/user-password-reset", userController.passwordReset);
 router.post("/user-nickname-change", userController.nicknameChange);
 //회원 탈퇴
 router.post("/user-delete", userController.userDelete);
-
 //유저 티어 업데이트
 router.post("/user-tier-update", userController.userTierUpdate);
+//유저 랭킹 조회
+router.post("/get-user-ranking", userController.getUserRanking);
+// 유저 전체 조회
+router.post("/get-all-users", userController.getAllUser);
+// 유저 전체 티어 업데이트
+router.post("/user-tier-all-update", userController.userTierAllUpdate);
 //사용자 권한은 아직
 
 module.exports = router;

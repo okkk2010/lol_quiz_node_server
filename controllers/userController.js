@@ -1,3 +1,4 @@
+const e = require("express");
 const userService = require("../services/userServices");
 const bcrypt = require("bcrypt");
 
@@ -211,11 +212,66 @@ exports.userDelete = async (req, res) => {
 
 exports.userTierUpdate = async (req, res) => {
     try {
-        const { id, answer_quiz } = req.body;
+        const { id } = req.body;
         await userService.userTierUpdate(id, answer_quiz);
 
         res.status(200).json({
             "success": true
+        });
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({
+            "success": false,
+            "error": {
+                "code": "SERVER_ERROR",
+                "message": "서버 오류"
+            }
+        });
+    }
+};
+
+exports.userTierAllUpdate = async (req, res) => {
+    try {
+        const [ users ] = await userService.getAllUsers();
+        
+        for(const user of users) {
+            await userService.userTierUpdate(user.id);
+        }
+
+        res.status(200).json({
+            "success": true
+        });
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({
+            "success": false,
+            "error": {
+                "code": "SERVER_ERROR",
+                "message": "서버 오류"
+            }
+        });
+    }
+}
+
+exports.getUserRanking = async (req, res) => {
+    try {
+        const { id } = req.body;
+        const userRanking = await userService.getUserRanking(id);
+
+        if (!userRanking) {
+            res.status(400).json({
+                "success": false,
+                "error": {
+                    "code": "NOT_FOUND_RANKING",
+                    "message": `해당 id: ${id}에 대한 랭킹 정보가 없습니다.`
+                }
+            });
+            return;
+        }
+
+        res.status(200).json({
+            "success": true,
+            "content": userRanking
         });
     } catch(err) {
         res.status(500).json({
@@ -226,4 +282,34 @@ exports.userTierUpdate = async (req, res) => {
             }
         });
     }
-};
+}
+
+exports.getAllUser = async (req, res) => {
+    try {
+        const [users] = await userService.getAllUsers();
+
+        if (users.length === 0) {
+            res.status(404).json({
+                "success": false,
+                "error": {
+                    "code": "NOT_FOUND_USER",
+                    "message": "사용자 정보가 없습니다."
+                }
+            });
+            return;
+        }
+
+        res.status(200).json({
+            "success": true,
+            "content": JSON.stringify(users)
+        });
+    } catch(err) {
+        res.status(500).json({
+            "success": false,
+            "error": {
+                "code": "SERVER_ERROR",
+                "message": "서버 오류"
+            }
+        });
+    }
+}

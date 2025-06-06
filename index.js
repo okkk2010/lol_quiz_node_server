@@ -7,6 +7,7 @@ const methodOverride = require('method-override');
 const userRoutes = require("./routers/userRouter");
 const quizRoutes = require("./routers/quizRouter");
 const recordRoutes = require("./routers/recordRouter");
+const tierRoutes = require("./routers/tierRouter");
 //#endregion
 
 const app = express();
@@ -24,10 +25,10 @@ app.use((req, res, next) => {
 });
 //#endregion
 
-//user
 app.use("/user", userRoutes);
 app.use("/quiz", quizRoutes);
 app.use("/record", recordRoutes);
+app.use("/tier", tierRoutes);
 
 app.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);

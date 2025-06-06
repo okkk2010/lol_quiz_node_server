@@ -8,9 +8,21 @@ exports.getUserRecords = async (id) => {
     }
 }
 
+exports.recordGameHistory = async (user_id, title, answer_quiz, play_date) => {
+    try {
+        return await db.query("INSERT INTO record (user_id, title, answer_quiz, play_date) VALUES (?, ?, ?, ?)", [user_id, title, answer_quiz, play_date]);
+    } catch (err) {
+        throw err;
+    }
+}
+
 exports.getRanking = async () => {
     try {
-        return await db.query("SELECT user.nickname, user.tier, record.answer_quiz from user JOIN record ON user.id == record.user_id ORDER BY record.answer_quiz DESC");
+        //select user.id, max(answer_quiz) as answer_quiz from user right join record on user.id = record.user_id group by user.id;
+
+        return await db.query("SELECT ROW_NUMBER() OVER (ORDER BY MAX(record.answer_quiz) DESC) AS rank_num," +
+	                            "user.id, user.nickname, MAX(record.answer_quiz) AS answer_quiz " +
+	                            "FROM user JOIN record ON user.id = record.user_id GROUP BY user.id ORDER BY 1 DESC LIMIT 30");
     } catch (err) {
         throw err;
     }

@@ -4,7 +4,7 @@ const recordService = require("../services/recordServices");
 exports.getUserRecords = async (req, res) => {
     try {
         const { id } = req.body;
-        const records = await userService.getUserRecords(id);
+        const [records] = await recordService.getUserRecords(id);
 
         if (records.length === 0) {
             res.status(404).json({
@@ -19,14 +19,44 @@ exports.getUserRecords = async (req, res) => {
 
         res.status(200).json({
             "success": true,
-            "content": records
+            "content": JSON.stringify(records)
         });
     } catch (err) {
         res.status(500).json({
             "success": false,
             "error": {
                 "code": "SERVER_ERROR",
-                "message": "서버 오류입니다."
+                "message": err.message || "서버 오류입니다."
+            }
+        });
+    }
+}
+
+exports.recordGameHistory = async (req, res) => {
+    try {
+        const { user_id, title, answer_quiz, play_date } = req.body;
+        const result = await recordService.recordGameHistory(user_id, title, answer_quiz, play_date);
+
+        if (result.affectedRows === 0) {
+            res.status(400).json({
+                "success": false,
+                "error": {
+                    "code": "RECORD_INSERT_FAILED",
+                    "message": "전적 기록에 실패했습니다."
+                }
+            });
+            return;
+        }
+
+        res.status(200).json({
+            "success": true,
+        });
+    } catch (err) {
+        res.status(500).json({
+            "success": false,
+            "error": {
+                "code": "SERVER_ERROR",
+                "message": err.message || "서버 오류입니다."
             }
         });
     }
@@ -34,7 +64,7 @@ exports.getUserRecords = async (req, res) => {
 
 exports.getRanking = async (req, res) => {
     try {
-        const ranking = await recordService.getRanking();
+        const [ranking] = await recordService.getRanking();
 
         if (ranking.length === 0) {
             res.status(404).json({
@@ -49,14 +79,15 @@ exports.getRanking = async (req, res) => {
 
         res.status(200).json({
             "success": true,
-            "content": ranking
+            "content": JSON.stringify(ranking)
         });
     } catch (err) {
+        console.error(err.message);
         res.status(500).json({
             "success": false,
             "error": {
                 "code": "SERVER_ERROR",
-                "message": "서버 오류입니다."
+                "message": err.message || "서버 오류입니다."
             }
         });
     }
