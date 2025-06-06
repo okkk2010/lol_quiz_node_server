@@ -107,13 +107,13 @@ exports.userInfo = async (req, res) => {
     }
 };
 
-exports.passwordChange = async (req, res) => {
+exports.passwordReset = async (req, res) => {
     try {
         const { id, password } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
         await userService.passwordChange(id, hashedPassword);
 
-        res.status(200).JSON({
+        res.status(200).json({
             "success": true,
         });
     } catch(err) {
@@ -127,12 +127,12 @@ exports.passwordChange = async (req, res) => {
     }
 };
 
-exports.passwordReset = async (req, res) => {
+exports.passwordChange = async (req, res) => {
     try {
-        const { id, inputPw , afterPw } = req.body;
+        const { id, password , new_password } = req.body;
         const [ beforPw ] = await userService.checkPassword(id);
         
-        const isMatch = await bcrypt.compare(inputPw, beforPw[0].password);
+        const isMatch = await bcrypt.compare(password, beforPw[0].password);
         if(!isMatch) {
             res.status(400).json({
                 "success": false,
@@ -144,7 +144,7 @@ exports.passwordReset = async (req, res) => {
             return;
         }
 
-        const hashedPw = await bcrypt.hash(afterPw, 10);
+        const hashedPw = await bcrypt.hash(new_password, 10);
         await userService.passwordChange(id, hashedPw);
 
         res.status(200).json({
