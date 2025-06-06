@@ -62,6 +62,37 @@ exports.recordGameHistory = async (req, res) => {
     }
 }
 
+exports.getHighAnswerQuiz = async (req, res) => {
+    try {
+        const { id } = req.body;
+        const answer_quiz = await recordService.getHighAnswerQuiz(id);
+
+        if (answer_quiz.length === 0) {
+            res.status(404).json({
+                "success": false,
+                "error": {
+                    "code": "NOT_FOUND_HIGH_ANSWER_QUIZ",
+                    "message": `해당 사용자(${id})의 최고 정답 수가 없습니다.`
+                }
+            });
+            return;
+        }
+
+        res.status(200).json({
+            "success": true,
+            "content": JSON.stringify(answer_quiz)
+        });
+    } catch (err) {
+        res.status(500).json({
+            "success": false,
+            "error": {
+                "code": "SERVER_ERROR",
+                "message": err.message || "서버 오류입니다."
+            }
+        });
+    }
+}
+
 exports.getRanking = async (req, res) => {
     try {
         const [ranking] = await recordService.getRanking();

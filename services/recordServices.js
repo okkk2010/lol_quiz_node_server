@@ -16,6 +16,15 @@ exports.recordGameHistory = async (user_id, title, answer_quiz, play_date) => {
     }
 }
 
+exports.getHighAnswerQuiz = async (id) => {
+    try {
+        const [result] = await db.query("SELECT MAX(answer_quiz) AS answer_quiz FROM record WHERE user_id = ?", [id]);
+        return result[0].answer_quiz;
+    } catch (err) {
+        throw err;
+    }
+}
+
 exports.getRanking = async () => {
     try {
         //select user.id, max(answer_quiz) as answer_quiz from user right join record on user.id = record.user_id group by user.id;
