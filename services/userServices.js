@@ -79,7 +79,7 @@ exports.userTierUpdate = async (id) => {
 
 exports.getUserRanking = async (id) => {
     try {
-        const [ranking] = await recordService.getRanking();
+        const [ranking] = await recordService.getAllRanking();
         const userRanking = ranking.find(r => r.user_id === id);
 
         if (!userRanking) {

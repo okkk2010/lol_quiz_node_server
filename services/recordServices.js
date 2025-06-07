@@ -37,6 +37,18 @@ exports.getRanking = async () => {
     }
 }
 
+exports.getAllRanking = async () => {
+    try {
+        //select user.id, max(answer_quiz) as answer_quiz from user right join record on user.id = record.user_id group by user.id;
+
+        return await db.query("SELECT ROW_NUMBER() OVER (ORDER BY MAX(record.answer_quiz) DESC) AS rank_num," +
+	                            "user.id AS user_id, user.nickname AS nickname, MAX(record.answer_quiz) AS answer_quiz " +
+	                            "FROM user JOIN record ON user.id = record.user_id GROUP BY user.id ORDER BY 1 ASC");
+    } catch (err) {
+        throw err;
+    }
+}
+
 exports.getRecordStats = async (id) => {
     try {
         const [result] = await db.query("SELECT user_id, COUNT(*) AS total_quiz, AVG(answer_quiz) AS avg_answer_quiz FROM record WHERE user_id = ?", [id]);
