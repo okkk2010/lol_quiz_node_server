@@ -58,4 +58,12 @@ exports.getRecordStats = async (id) => {
     }
 }
 
+exports.deleteUserRecords = async (id) => {
+    try {
+        return await db.query("DELETE FROM record WHERE user_id = ?", [id]);
+    } catch (err) {
+        throw err;
+    }
+}
+
 //

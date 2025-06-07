@@ -1,5 +1,6 @@
 const e = require("express");
 const userService = require("../services/userServices");
+const recordService = require("../services/recordServices");
 const bcrypt = require("bcrypt");
 
 exports.signUpUser = async (req, res) => {
@@ -184,8 +185,9 @@ exports.userDelete = async (req, res) => {
     try {
         const { id } = req.body;
         const result = await userService.userDelete(id);
+        const recordResult = await recordService.deleteUserRecords(id);
 
-        if(result.affectedRows === 0) {
+        if(result.affectedRows === 0 || recordResult.affectedRows === 0) {
             res.status(400).json({
                 "success": false,
                 "error": {
