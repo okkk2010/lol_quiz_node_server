@@ -59,12 +59,12 @@ exports.userTierUpdate = async (id) => {
             return;
         }
 
-        let tier;
-        if( userRanking.rank_num <= 30) {
-            [tier] = await db.query("SELECT name FROM tier WHERE standard_ranking >= ? ORDER BY standard_ranking ASC LIMIT 1", [userRanking.rank_num]);
-        } else {
-            [tier] = await db.query("SELECT name FROM tier WHERE standard_score <= ? ORDER BY standard_score DESC LIMIT 1", [userRanking.answer_quiz]);
-        }
+        let [tier] = await db.query("SELECT name FROM tier WHERE standard_score <= ? ORDER BY standard_score DESC LIMIT 1", [userRanking.answer_quiz]);
+        // if( userRanking.rank_num <= 30) {
+        //     [tier] = await db.query("SELECT name FROM tier WHERE standard_ranking >= ? ORDER BY standard_ranking ASC LIMIT 1", [userRanking.rank_num]);
+        // } else {
+            
+        // }
 
         if (tier.length === 0) {
             throw new Error("Invalid answer_quiz provided.");
