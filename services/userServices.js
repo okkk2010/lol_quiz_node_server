@@ -53,7 +53,7 @@ exports.userTierUpdate = async (id) => {
     try {
         const [recordRanking] = await recordService.getRanking();
 
-        const userRanking = recordRanking.find(r => r.id === id);
+        const userRanking = recordRanking.find(r => r.user_id === id);
         if (!userRanking) {
             console.error(`User with id ${id} not found in ranking.`);
             return;
